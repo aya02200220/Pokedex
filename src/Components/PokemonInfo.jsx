@@ -9,11 +9,14 @@ import { motion } from "framer-motion";
 import { useTheme } from "./themeContext";
 import noImage from "../../public/images/no-image.png";
 import pokedexFlame from "../../public/images/pokedexFlame.png";
+import { CircularProgress } from "@mui/material";
 
 const PokemonInfo = ({ pokemon }) => {
   const { darkMode } = useTheme();
   const [showShiny, setShowShiny] = useState(false);
   const [showHome, setShowHome] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [previousState, setPreviousState] = useState({});
 
   const theme = createTheme({
     palette: {
@@ -32,6 +35,25 @@ const PokemonInfo = ({ pokemon }) => {
       },
     },
   });
+
+  useEffect(() => {
+    setImageLoading(true); // ポケモンが変わったらローディング状態をリセット
+  }, [pokemon]);
+
+  // 画像がロードされたら、ローディングを非表示に
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
+  useEffect(() => {
+    const currentState = { pokemon, showShiny, showHome };
+    if (JSON.stringify(currentState) !== JSON.stringify(previousState)) {
+      setImageLoading(true);
+      setPreviousState(currentState);
+    } else {
+      setImageLoading(false); // 同じポケモン・同じ画像の場合は強制的にローディングを停止
+    }
+  }, [pokemon, showShiny, showHome]);
 
   const toggleShiny = () => {
     setShowShiny(!showShiny);
@@ -71,7 +93,7 @@ const PokemonInfo = ({ pokemon }) => {
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
-          height: "75%",
+          height: "85%",
           overflow: "auto",
           justifyContent: "center",
           alignItems: "center",
@@ -159,16 +181,36 @@ const PokemonInfo = ({ pokemon }) => {
           {/* {console.log(pokemon)} */}
         </Box>
 
+        {imageLoading && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(255,255,255,0.5)",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+
         {currentImage ? (
           <Box
+            onLoad={handleImageLoad}
             component="img"
             sx={{
               width: "100%",
-              maxHeight: "50%",
+              maxHeight: "70%",
               objectFit: "contain",
               maxWidth: "100%",
               height: "auto",
               objectFit: "scale-down",
+              display: imageLoading ? "none" : "block",
             }}
             src={currentImage}
             alt={`${pokemon.name} ${showShiny ? "Shiny" : "Default"} ${
@@ -176,12 +218,12 @@ const PokemonInfo = ({ pokemon }) => {
             } Image`}
           />
         ) : (
-          <Box>
+          <Box onLoad={handleImageLoad}>
             <Box
               component="img"
               src={noImage}
               alt="No available image"
-              sx={{ width: "50%" }}
+              sx={{ width: "30%" }}
             />
           </Box>
         )}
@@ -192,7 +234,7 @@ const PokemonInfo = ({ pokemon }) => {
           // flexDirection: "row",
           display: "flex",
           justifyContent: "center",
-          height: "25%",
+          height: "20%",
           overflow: "auto",
         }}
       >

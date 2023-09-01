@@ -1,8 +1,8 @@
 import { useState } from "react";
-import "./App.css";
+// import "./App.css";
 import NavBar from "./Components/Navbar";
 import PokemonList from "./Components/PokemonList";
-import Index from "./Components/Index";
+import Index from "./Components/Index.jsx";
 import { useTheme } from "./Components/themeContext.jsx";
 import {
   ThemeProvider as MuiThemeProvider,

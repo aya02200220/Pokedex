@@ -4,6 +4,7 @@ import Pagination from "@mui/material/Pagination";
 import PokemonInfo from "./PokemonInfo";
 import PokemonList from "./PokemonList";
 import Pokedex from "../../public/images/Pokedex.png";
+import { motion } from "framer-motion";
 
 let allPokemonData = [];
 
@@ -14,7 +15,21 @@ async function fetchAllPokemonData(offset = 0, limit = 20) {
     );
     if (response.ok) {
       const data = await response.json();
-      allPokemonData = allPokemonData.concat(data.results);
+
+      const detailedDataPromises = data.results.map(async (pokemon) => {
+        const res = await fetch(pokemon.url);
+        const detailedData = await res.json();
+        return {
+          id: detailedData.id,
+          ...pokemon,
+          front: detailedData.sprites.front_default,
+          back: detailedData.sprites.back_default,
+        };
+      });
+
+      const detailedData = await Promise.all(detailedDataPromises);
+
+      allPokemonData = allPokemonData.concat(detailedData);
 
       if (data.next !== null) {
         await fetchAllPokemonData(offset + limit, limit);
@@ -83,38 +98,54 @@ export default function App() {
         <Box
           sx={{
             mt: 12,
-            // border: "solid 1px black",
             width: "95%",
             height: "75vh",
-            // minHeight: "95%",
             display: "flex",
           }}
         >
           {/* Pokemon Lists */}
           <Box
-            sx={{ width: "60%", border: "solid 1px red", overflow: "scroll" }}
+            sx={{
+              pl: 2,
+              width: "60%",
+              // border: "solid 1px red",
+              overflow: "scroll",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 3,
+              pt: 6,
+            }}
           >
-            <ul>
-              {displayData.map((pokemon, index) => (
-                <PokemonList
-                  key={index}
-                  onPokemonClick={handlePokemonClick}
-                  pokemon={pokemon}
-                />
-              ))}
-            </ul>
+            {displayData.map((pokemon, index) => (
+              <PokemonList
+                key={index}
+                onPokemonClick={handlePokemonClick}
+                pokemon={pokemon}
+              />
+            ))}
           </Box>
           <Box sx={{ width: "40%", textAlign: "center" }}>
             {selectedPokemon ? (
               <PokemonInfo pokemon={selectedPokemon} />
             ) : (
               <Box mt={10} p={3}>
-                <Box component="img" src={Pokedex} sx={{ width: "80%" }} />
+                <motion.div
+                  initial={{ y: -10 }}
+                  animate={{ y: [-10, 10, -10] }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <Box component="img" src={Pokedex} sx={{ width: "50%" }} />
+                </motion.div>
                 <Typography
                   sx={{
                     fontSize: "30px",
                     fontWeight: "800",
                     lineHeight: "30px",
+                    mt: 4,
                     // color: theme.palette.text.primary,
                   }}
                 >
