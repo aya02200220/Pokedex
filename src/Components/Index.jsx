@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Box, Container } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import PokemonInfo from "./PokemonInfo";
 import PokemonList from "./PokemonList";
+import Pokedex from "../../public/images/Pokedex.png";
 
 let allPokemonData = [];
 
@@ -82,16 +83,16 @@ export default function App() {
         <Box
           sx={{
             mt: 12,
-            border: "solid 1px black",
-            width: "90%",
-            height: "80vh",
+            // border: "solid 1px black",
+            width: "95%",
+            height: "75vh",
             // minHeight: "95%",
             display: "flex",
           }}
         >
           {/* Pokemon Lists */}
           <Box
-            sx={{ width: "70%", border: "solid 1px red", overflow: "scroll" }}
+            sx={{ width: "60%", border: "solid 1px red", overflow: "scroll" }}
           >
             <ul>
               {displayData.map((pokemon, index) => (
@@ -103,8 +104,24 @@ export default function App() {
               ))}
             </ul>
           </Box>
-          <Box flexGrow sx={{}}>
-            {selectedPokemon && <PokemonInfo pokemon={selectedPokemon} />}
+          <Box sx={{ width: "40%", textAlign: "center" }}>
+            {selectedPokemon ? (
+              <PokemonInfo pokemon={selectedPokemon} />
+            ) : (
+              <Box mt={10} p={3}>
+                <Box component="img" src={Pokedex} sx={{ width: "80%" }} />
+                <Typography
+                  sx={{
+                    fontSize: "30px",
+                    fontWeight: "800",
+                    lineHeight: "30px",
+                    // color: theme.palette.text.primary,
+                  }}
+                >
+                  Select a Pokémon
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>
