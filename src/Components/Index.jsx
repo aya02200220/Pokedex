@@ -5,6 +5,7 @@ import PokemonInfo from "./PokemonInfo";
 import PokemonList from "./PokemonList";
 import Pokedex from "../../public/images/Pokedex.png";
 import { motion } from "framer-motion";
+import { animate } from "framer-motion";
 
 let allPokemonData = [];
 
@@ -80,6 +81,34 @@ export default function App() {
     displayPage(value);
   };
 
+  const scrollDown = () => {
+    const container = document.getElementById("your-scrollable-container-id");
+    if (container) {
+      container.scrollBy(0, 500); // 100px下にスクロール
+    }
+  };
+
+  const smoothScroll = (amount) => {
+    const container = document.getElementById("your-scrollable-container-id");
+    if (container) {
+      let start = null;
+      const step = (timestamp) => {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+        const target = container.scrollTop + amount;
+        container.scrollTop += (amount * progress) / 300;
+
+        if (progress < 300) {
+          window.requestAnimationFrame(step);
+        } else {
+          container.scrollTop = target; // 終了時に目的地に強制移動
+        }
+      };
+
+      window.requestAnimationFrame(step);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -93,6 +122,7 @@ export default function App() {
         sx={{
           display: "flex",
           justifyContent: "center",
+          position: "relative",
         }}
       >
         <Box
@@ -105,6 +135,7 @@ export default function App() {
         >
           {/* Pokemon Lists */}
           <Box
+            id="your-scrollable-container-id"
             sx={{
               pl: 2,
               width: "60%",
@@ -123,6 +154,31 @@ export default function App() {
                 pokemon={pokemon}
               />
             ))}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: "10px", // 位置を調整
+                right: "10px", // 位置を調整
+                cursor: "pointer",
+                // その他のスタイル
+              }}
+              onClick={() => smoothScroll(100)}
+            >
+              ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+            </Box>
+            {/* <Box
+              sx={{
+                position: "absolute", // 絶対位置を設定
+                bottom: 0, // 親コンテナの下部に配置
+                left: 0,
+                right: 0,
+                height: "50px", // 高さを設定
+                backgroundImage:
+                  "linear-gradient(to top, #FCEEC8, transparent)",
+                pointerEvents: "none", // クリックを透過させる
+                zIndex: 5,
+              }}
+            /> */}
           </Box>
           <Box sx={{ width: "40%", textAlign: "center", mt: 8 }}>
             {selectedPokemon ? (

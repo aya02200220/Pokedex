@@ -12,6 +12,22 @@ body {
   padding: 0;
 }
 
+/* Webkit browsers like Chrome, */
+/* Safari ::-webkit-scrollbar {
+  width: 1px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+} */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: darkgrey grey;
+}
+
 /* h1 {
   font-size: 3.2em;
   line-height: 1.1;

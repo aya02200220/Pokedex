@@ -225,7 +225,7 @@ const PokemonInfo = ({ pokemon }) => {
               alt="No available image"
               sx={{ width: "30%", display: imageLoading ? "none" : "block" }}
             />
-            {imageLoading && setImageLoading(false)} {/* <- これを追加 */}
+            {imageLoading && setImageLoading(false)}
           </>
         )}
       </Box>
