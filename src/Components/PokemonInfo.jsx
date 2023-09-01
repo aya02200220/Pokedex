@@ -201,8 +201,8 @@ const PokemonInfo = ({ pokemon }) => {
 
         {currentImage ? (
           <Box
-            onLoad={handleImageLoad}
             component="img"
+            onLoad={handleImageLoad} // <- 画像読み込み完了時に handleImageLoad 関数を呼ぶ
             sx={{
               width: "100%",
               maxHeight: "70%",
@@ -218,14 +218,15 @@ const PokemonInfo = ({ pokemon }) => {
             } Image`}
           />
         ) : (
-          <Box onLoad={handleImageLoad}>
+          <>
             <Box
               component="img"
               src={noImage}
               alt="No available image"
-              sx={{ width: "30%" }}
+              sx={{ width: "30%", display: imageLoading ? "none" : "block" }}
             />
-          </Box>
+            {imageLoading && setImageLoading(false)} {/* <- これを追加 */}
+          </>
         )}
       </Box>
 

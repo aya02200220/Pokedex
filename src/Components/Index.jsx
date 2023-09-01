@@ -97,9 +97,9 @@ export default function App() {
       >
         <Box
           sx={{
-            mt: 12,
+            mt: 5,
             width: "95%",
-            height: "75vh",
+            height: "80vh",
             display: "flex",
           }}
         >
@@ -124,7 +124,7 @@ export default function App() {
               />
             ))}
           </Box>
-          <Box sx={{ width: "40%", textAlign: "center" }}>
+          <Box sx={{ width: "40%", textAlign: "center", mt: 8 }}>
             {selectedPokemon ? (
               <PokemonInfo pokemon={selectedPokemon} />
             ) : (
