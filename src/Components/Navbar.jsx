@@ -10,6 +10,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import Switch from "@mui/material/Switch";
 import { useTheme } from "./themeContext";
+import Logo from "../../public/images/logo.png";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -66,27 +67,16 @@ export default function NavBar() {
         }}
       >
         <Toolbar>
-          <Switch checked={darkMode} onChange={toggleDarkMode} />
-
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton> */}
+          <Box component="img" src={Logo} sx={{ height: "55px" }}></Box>
           <Typography
             variant="h6"
             noWrap
             component="div"
             fontSize="25px"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
-            Poke-Dex
-          </Typography>
-          {/* <Search>
+          ></Typography>
+          <Switch checked={darkMode} onChange={toggleDarkMode} />
+          <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -94,7 +84,7 @@ export default function NavBar() {
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
             />
-          </Search> */}
+          </Search>
         </Toolbar>
       </AppBar>
     </Box>
