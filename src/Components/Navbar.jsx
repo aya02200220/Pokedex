@@ -56,8 +56,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function NavBar() {
+export default function NavBar({ setSearchTerm }) {
   const { darkMode, toggleDarkMode } = useTheme();
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -88,6 +92,7 @@ export default function NavBar() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
+              onChange={handleSearchChange}
             />
           </Search>
         </Toolbar>

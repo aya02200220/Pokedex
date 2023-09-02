@@ -6,7 +6,7 @@ This project is a web-based Pokédex, built to help Pokémon enthusiasts find de
 
 Key Features:
 
-- Search Pokémon by name or ID.
+- Search Pokémon by name.
 - View detailed information including types, abilities, and stats.
 - Toggle between standard and shiny sprites.
 - Option to switch between 2D and 3D sprites (if available).

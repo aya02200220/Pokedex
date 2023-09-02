@@ -234,7 +234,7 @@ const PokemonInfo = ({ pokemon }) => {
         {currentImage ? (
           <Box
             component="img"
-            onLoad={handleImageLoad} // <- 画像読み込み完了時に handleImageLoad 関数を呼ぶ
+            onLoad={handleImageLoad}
             sx={{
               width: "100%",
               maxHeight: "70%",
