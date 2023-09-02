@@ -12,6 +12,7 @@ import { Box } from "@mui/material";
 
 function App() {
   const { darkMode } = useTheme();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const theme = createTheme({
     palette: {
@@ -33,8 +34,8 @@ function App() {
             color: theme.palette.text.primary,
           }}
         >
-          <NavBar />
-          <Index />
+          <NavBar setSearchTerm={setSearchTerm} />
+          <Index searchTerm={searchTerm} />
         </Box>
       </MuiThemeProvider>
     </>

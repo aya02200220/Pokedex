@@ -141,7 +141,7 @@ const PokemonList = ({ pokemon, onPokemonClick, index }) => {
                     backgroundColor: theme.palette.background2.default,
                     borderRadius: 5,
                     fontWeight: "400",
-                    padding: "1px 5px",
+                    padding: " 5px",
                   }}
                 >
                   {pokemon.id}

@@ -46,13 +46,23 @@ async function fetchAllPokemonData(offset = 0, limit = 20) {
   }
 }
 
-export default function App() {
+export default function App({ searchTerm }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [displayData, setDisplayData] = useState([]);
   const pageSize = 20; // 1ページに表示する項目数
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    if (allPokemonData.length > 0) {
+      const filteredData = allPokemonData.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setDisplayData(filteredData.slice(0, pageSize));
+    }
+  }, [searchTerm]);
+
+  /////////// Page Nation ///////////////////////////////
   useEffect(() => {
     setIsLoading(true);
     fetchAllPokemonData().then(() => {
