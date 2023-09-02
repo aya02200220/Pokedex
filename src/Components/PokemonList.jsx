@@ -24,6 +24,9 @@ const PokemonList = ({ pokemon, onPokemonClick, index }) => {
       background: {
         default: darkMode ? "#333" : "#f5f5f5",
       },
+      background2: {
+        default: darkMode ? "#787878" : "#ffcc6d",
+      },
       border: {
         default: darkMode ? "solid 5px #747474" : "solid 5px #333",
       },
@@ -116,24 +119,37 @@ const PokemonList = ({ pokemon, onPokemonClick, index }) => {
             ></Box>
             <Box
               sx={{
-                fontSize: "20px",
-                fontWeight: "900",
                 position: "absolute",
-                top: "-23%",
+                top: "-25%",
                 left: "-16%",
-                width: "220px",
+                width: "190px",
                 display: "flex",
-                // color: "#333",
                 color: theme.palette.text.primary,
+                justifyContent: "center",
               }}
             >
               <Typography
                 fontSize={"17px"}
-                sx={{ fontWeight: "500", textTransform: "capitalize" }}
+                sx={{
+                  fontWeight: "500",
+                  textTransform: "capitalize",
+                  lineHeight: "16px",
+                }}
               >
-                {pokemon.id}: {pokemon.name}
+                <span
+                  style={{
+                    backgroundColor: theme.palette.background2.default,
+                    borderRadius: 5,
+                    fontWeight: "400",
+                    padding: "1px 5px",
+                  }}
+                >
+                  {pokemon.id}
+                </span>{" "}
+                {pokemon.name}
               </Typography>
             </Box>
+
             <Box zIndex={1}>
               <motion.div
                 initial={{ rotateY: 0 }}

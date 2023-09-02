@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Button, Container, IconButton, Typography } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import PokemonInfo from "./PokemonInfo";
 import PokemonList from "./PokemonList";
 import Pokedex from "../../public/images/Pokedex.png";
 import { motion } from "framer-motion";
 import { animate } from "framer-motion";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import Skeleton from "@mui/material/Skeleton";
 
 let allPokemonData = [];
 
@@ -48,10 +51,13 @@ export default function App() {
   const [displayData, setDisplayData] = useState([]);
   const pageSize = 20; // 1ページに表示する項目数
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     fetchAllPokemonData().then(() => {
       displayPage(1); // 初期ページを表示
+      setIsLoading(false);
     });
   }, []);
 
@@ -82,14 +88,14 @@ export default function App() {
   };
 
   const scrollDown = () => {
-    const container = document.getElementById("your-scrollable-container-id");
+    const container = document.getElementById("scrollable-container");
     if (container) {
       container.scrollBy(0, 500); // 100px下にスクロール
     }
   };
 
   const smoothScroll = (amount) => {
-    const container = document.getElementById("your-scrollable-container-id");
+    const container = document.getElementById("scrollable-container");
     if (container) {
       let start = null;
       const step = (timestamp) => {
@@ -122,7 +128,6 @@ export default function App() {
         sx={{
           display: "flex",
           justifyContent: "center",
-          position: "relative",
         }}
       >
         <Box
@@ -131,15 +136,16 @@ export default function App() {
             width: "95%",
             height: "80vh",
             display: "flex",
+            position: "relative",
           }}
         >
           {/* Pokemon Lists */}
           <Box
-            id="your-scrollable-container-id"
+            id="scrollable-container"
             sx={{
+              // border: "solid 1px red", // Border
               pl: 2,
               width: "60%",
-              // border: "solid 1px red",
               overflow: "scroll",
               display: "flex",
               flexWrap: "wrap",
@@ -147,38 +153,54 @@ export default function App() {
               pt: 6,
             }}
           >
-            {displayData.map((pokemon, index) => (
-              <PokemonList
-                key={index}
-                onPokemonClick={handlePokemonClick}
-                pokemon={pokemon}
-              />
-            ))}
-            <Box
+            {isLoading ? (
+              <Box mt={5} sx={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {Array.from({ length: 20 }, (_, index) => (
+                  <Skeleton
+                    key={index}
+                    animation="wave"
+                    variant="circular"
+                    width={170}
+                    height={170}
+                  />
+                ))}
+              </Box>
+            ) : (
+              displayData.map((pokemon, index) => (
+                <PokemonList
+                  key={index}
+                  onPokemonClick={handlePokemonClick}
+                  pokemon={pokemon}
+                />
+              ))
+            )}
+
+            <IconButton
+              onClick={() => smoothScroll(-100)}
               sx={{
                 position: "absolute",
-                bottom: "10px", // 位置を調整
-                right: "10px", // 位置を調整
+                bottom: "50%",
+                left: "57%",
+                zIndex: 1,
                 cursor: "pointer",
-                // その他のスタイル
+                border: "solid 1px gray",
               }}
-              onClick={() => smoothScroll(100)}
             >
-              ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-            </Box>
-            {/* <Box
+              <ArrowDropUpIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => smoothScroll(100)}
               sx={{
-                position: "absolute", // 絶対位置を設定
-                bottom: 0, // 親コンテナの下部に配置
-                left: 0,
-                right: 0,
-                height: "50px", // 高さを設定
-                backgroundImage:
-                  "linear-gradient(to top, #FCEEC8, transparent)",
-                pointerEvents: "none", // クリックを透過させる
-                zIndex: 5,
+                position: "absolute",
+                bottom: "40%",
+                left: "57%",
+                zIndex: 1,
+                cursor: "pointer",
+                border: "solid 1px gray",
               }}
-            /> */}
+            >
+              <ArrowDropDownIcon />
+            </IconButton>
           </Box>
           <Box sx={{ width: "40%", textAlign: "center", mt: 8 }}>
             {selectedPokemon ? (
