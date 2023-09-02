@@ -11,6 +11,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import Switch from "@mui/material/Switch";
 import { useTheme } from "./themeContext";
 import Logo from "../../public/images/logo.png";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -75,7 +77,10 @@ export default function NavBar() {
             fontSize="25px"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           ></Typography>
-          <Switch checked={darkMode} onChange={toggleDarkMode} />
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {darkMode ? <Brightness4Icon /> : <Brightness7Icon />}
+            <Switch checked={darkMode} onChange={toggleDarkMode} />
+          </Box>
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
