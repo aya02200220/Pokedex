@@ -73,7 +73,9 @@ export default function NavBar({ setSearchTerm }) {
         }}
       >
         <Toolbar>
-          <Box component="img" src={Logo} sx={{ height: "55px" }}></Box>
+          <a href="/">
+            <Box component="img" src={Logo} sx={{ height: "55px" }}></Box>
+          </a>
           <Typography
             variant="h6"
             noWrap
