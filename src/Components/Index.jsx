@@ -10,16 +10,48 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import Skeleton from "@mui/material/Skeleton";
 
-let allPokemonData = [];
+// async function fetchAllPokemonData(offset = 0, limit = 20) {
+//   try {
+//     const response = await fetch(
+//       `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`
+//     );
+//     if (response.ok) {
+//       const data = await response.json();
 
-async function fetchAllPokemonData(offset = 0, limit = 20) {
+//       const detailedDataPromises = data.results.map(async (pokemon) => {
+//         const res = await fetch(pokemon.url);
+//         const detailedData = await res.json();
+//         return {
+//           id: detailedData.id,
+//           ...pokemon,
+//           front: detailedData.sprites.front_default,
+//           back: detailedData.sprites.back_default,
+//         };
+//       });
+
+//       const detailedData = await Promise.all(detailedDataPromises);
+
+//       allPokemonData = allPokemonData.concat(detailedData);
+
+//       if (data.next !== null) {
+//         await fetchAllPokemonData(offset + limit, limit);
+//       }
+//     } else {
+//       console.log("Response was not ok:", response);
+//     }
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//   }
+// }
+
+async function fetchPokemonDataForPage(page = 1, limit = 20) {
+  const offset = (page - 1) * limit;
   try {
     const response = await fetch(
       `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`
     );
     if (response.ok) {
       const data = await response.json();
-
       const detailedDataPromises = data.results.map(async (pokemon) => {
         const res = await fetch(pokemon.url);
         const detailedData = await res.json();
@@ -30,46 +62,115 @@ async function fetchAllPokemonData(offset = 0, limit = 20) {
           back: detailedData.sprites.back_default,
         };
       });
-
-      const detailedData = await Promise.all(detailedDataPromises);
-
-      allPokemonData = allPokemonData.concat(detailedData);
-
-      if (data.next !== null) {
-        await fetchAllPokemonData(offset + limit, limit);
-      }
+      return Promise.all(detailedDataPromises);
     } else {
       console.log("Response was not ok:", response);
     }
   } catch (error) {
     console.error("Error fetching data:", error);
   }
+  return [];
 }
 
 export default function App({ searchTerm }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [displayData, setDisplayData] = useState([]);
   const pageSize = 20; // 1ページに表示する項目数
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (allPokemonData.length > 0) {
-      const filteredData = allPokemonData.filter((pokemon) =>
-        pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setDisplayData(filteredData.slice(0, pageSize));
+  const [allData, setAllData] = useState([]); // すべてのポケモンのデータ
+  const [displayData, setDisplayData] = useState([]); // 表示またはフィルタリングされたデータ
+
+  const [allPokemonData, setAllPokemonData] = useState([]);
+
+  async function fetchAllPokemonData() {
+    try {
+      // まず総数を取得
+      const countResponse = await fetch("https://pokeapi.co/api/v2/pokemon");
+      if (countResponse.ok) {
+        const countData = await countResponse.json();
+        const totalCount = countData.count;
+
+        // 総数に基づいてすべてのポケモンのデータを取得
+        const response = await fetch(
+          `https://pokeapi.co/api/v2/pokemon?limit=${totalCount}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setAllPokemonData(data.results);
+        } else {
+          console.log("Response was not ok:", response);
+        }
+      } else {
+        console.log("Count response was not ok:", countResponse);
+      }
+    } catch (error) {
+      console.error("Error fetching all pokemon data:", error);
     }
-  }, [searchTerm]);
+  }
+
+  useEffect(() => {
+    fetchAllPokemonData();
+  }, []);
+
+  async function fetchPokemonDetails(pokemon) {
+    try {
+      const response = await fetch(pokemon.url);
+      if (response.ok) {
+        const detailedData = await response.json();
+        return {
+          id: detailedData.id,
+          ...pokemon,
+          front: detailedData.sprites.front_default,
+          back: detailedData.sprites.back_default,
+        };
+      } else {
+        console.log("Response was not ok:", response);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+    return null;
+  }
+
+  useEffect(() => {
+    if (searchTerm) {
+      const fetchAndSetDisplayData = async () => {
+        const filteredBasicData = allPokemonData.filter((pokemon) =>
+          pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        const detailedDataPromises = filteredBasicData.map(fetchPokemonDetails);
+        const detailedData = await Promise.all(detailedDataPromises);
+
+        setDisplayData(detailedData);
+      };
+
+      fetchAndSetDisplayData();
+    } else {
+      fetchPokemonDataForPage(currentPage).then((data) => {
+        setDisplayData(data);
+      });
+    }
+  }, [searchTerm, allPokemonData, currentPage]);
 
   /////////// Page Nation ///////////////////////////////
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   fetchAllPokemonData().then(() => {
+  //     displayPage(1); // 初期ページを表示
+  //     setIsLoading(false);
+  //   });
+  // }, []);
+
   useEffect(() => {
     setIsLoading(true);
-    fetchAllPokemonData().then(() => {
-      displayPage(1); // 初期ページを表示
+    fetchPokemonDataForPage(currentPage).then((data) => {
+      setAllData(data);
+      setDisplayData(data);
       setIsLoading(false);
     });
-  }, []);
+  }, [currentPage]);
 
   async function handlePokemonClick(pokemonUrl) {
     try {
@@ -92,9 +193,13 @@ export default function App({ searchTerm }) {
   }
 
   // ページ番号が変更されたときに呼び出される
+  // const handlePageChange = (event, value) => {
+  //   setCurrentPage(value);
+  //   displayPage(value);
+  // };
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
-    displayPage(value);
   };
 
   const scrollDown = () => {
